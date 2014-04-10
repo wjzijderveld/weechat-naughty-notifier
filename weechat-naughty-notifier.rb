@@ -44,7 +44,7 @@ class AwesomeNotifier
     channel, sender_nick, message = [channel, sender_nick, message].map{|e| CGI.escapeHTML(e)}
     message.gsub!(/\b(#{my_nick})\b/i, "<b>\\1</b>")
     text = [channel, sender_nick, message].join(" ")
-    notify(text, color)
+    notify(text, color, @config["directed_sticky"])
   end
 
   def notify_public(channel, sender_nick, message, color)
@@ -54,7 +54,7 @@ class AwesomeNotifier
 
   def notify_private(sender_nick, message)
     text = [sender_nick, message].map{|e| CGI.escapeHTML(e)}.join(" ")
-    notify(text, @config["color_private"])
+    notify(text, @config["color_private"], @config["private_sticky"])
   end
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -113,16 +113,18 @@ class AwesomeNotifier
     Weechat.print("", s)
   end
 
-  def notify(text, background_color)
+  def notify(text, background_color, sticky = false)
     t = text.gsub("'", "\\\\'")
     c = background_color =~ /^#[0-9a-fA-F]{6}$/ ? background_color : @config["color_default"]
+    s = sticky ? 0 : @config["default_timeout"]
     command = (
       "n = require('naughty');" +
       "n.notify({"              +
         "text='#{t}',"          +
         "bg='#{c}',"            +
         "fg='#ffffff',"         +
-        "border_width=0"        +
+        "border_width=0,"       +
+        "timeout=#{s}"          +
       "});"
     )
     IO.popen("awesome-client", "r+") do |ac|
