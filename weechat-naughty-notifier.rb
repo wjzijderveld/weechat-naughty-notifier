@@ -87,8 +87,11 @@ class AwesomeNotifier
         end
       end
     elsif tags.include?("notify_private")
+      received_on = Weechat.buffer_get_string(Weechat.current_buffer(), "localvar_channel")
       sender_nick = parse_sender_nick(prefix)
-      notify_private(sender_nick, message)
+      if sender_nick != received_on
+        notify_private(sender_nick, message)
+      end
     end
     Weechat::WEECHAT_RC_OK
   end
