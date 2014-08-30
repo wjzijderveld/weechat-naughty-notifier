@@ -53,6 +53,10 @@ class AwesomeNotifier
   end
 
   def notify_private(sender_nick, message)
+    if sender_nick == "_xmlconsole"
+        return
+    end
+
     text = [sender_nick, message].map{|e| CGI.escapeHTML(e)}.join(" ")
     notify(text, @config["color_private"], @config["private_sticky"])
   end
@@ -80,7 +84,7 @@ class AwesomeNotifier
       end
       if sender_nick != my_nick
         color = by_path(@config, "colors", server, channel)
-        if message =~ /\b#{my_nick}\b/
+        if message =~ /\b#{my_nick}\b/ or message =~ /@(here|all)/
           notify_public_directed(channel, sender_nick, message, my_nick, color || @config["color_default"])
         elsif color
           notify_public(channel, sender_nick, message, color)
