@@ -80,7 +80,7 @@ class AwesomeNotifier
       end
       if sender_nick != my_nick
         color = by_path(@config, "colors", server, channel)
-        if message =~ /\b#{my_nick}\b/
+        if message =~ /\b#{my_nick}\b/ or message =~ /@(here|all)/
           notify_public_directed(channel, sender_nick, message, my_nick, color || @config["color_default"])
         elsif color
           notify_public(channel, sender_nick, message, color)
@@ -127,7 +127,8 @@ class AwesomeNotifier
         "bg='#{c}',"            +
         "fg='#ffffff',"         +
         "border_width=0,"       +
-        "timeout=#{s}"          +
+        "timeout=#{s},"         +
+        "screen=mouse.screen"   +
       "});"
     )
     IO.popen("awesome-client", "r+") do |ac|
