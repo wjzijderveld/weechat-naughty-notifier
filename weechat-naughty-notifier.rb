@@ -131,7 +131,8 @@ class AwesomeNotifier
         "bg='#{c}',"            +
         "fg='#ffffff',"         +
         "border_width=0,"       +
-        "timeout=#{s}"          +
+        "timeout=#{s},"         +
+        "screen=mouse.screen"   +
       "});"
     )
     IO.popen("awesome-client", "r+") do |ac|
